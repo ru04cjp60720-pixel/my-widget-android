@@ -20,6 +20,10 @@ android {
         compose = true
     }
 
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -38,6 +42,9 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.glance:glance-appwidget:1.1.1")
     implementation("androidx.glance:glance-material3:1.1.1")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.14.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
