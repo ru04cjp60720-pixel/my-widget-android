@@ -2,27 +2,36 @@
 
 A customizable Android home-screen shortcut widget.
 
+## Current prototype
+
+- Add, edit, and delete URL shortcuts in the app
+- Save shortcut data locally on the device
+- Show saved shortcuts in the home-screen widget
+- Tap a widget shortcut to open its URL
+- Resizable widget dimensions (subject to launcher support)
+
 ## Planned features
 
-- Resizable home-screen widgets (subject to launcher support)
-- Per-button actions: open apps or URLs
+- Launch installed apps
 - Custom image covers for buttons
-- Groups for organizing shortcuts
-- Local-only storage; no account or cloud required
+- Shortcut groups
 - JSON import and export
-- Traditional Chinese interface, with dark and light themes
+- Traditional Chinese interface with dark and light themes
 
 ## Technology
 
 - Kotlin
 - Jetpack Compose for the management UI
-- Android home-screen widget APIs / Jetpack Glance
-- Room for local data storage
+- Jetpack Glance for the home-screen widget
+- Android SharedPreferences for the current local prototype storage
+
+## Build
+
+The GitHub Actions workflow builds a debug APK on pushes and pull requests to `main`.
+The resulting APK is uploaded as the `my-widget-debug-apk` workflow artifact when a build succeeds.
+
+The project currently targets Android 15 (API 35) and supports Android 8.0 (API 26) or later.
 
 ## Status
 
-Early development. The project specification and initial implementation are being prepared. No release APK is available yet.
-
-## Requirements
-
-- Android 8.0 (API 26) or later (planned minimum)
+Early prototype. Source files and an automated build workflow are in place. The APK has not yet been verified by a successful CI build or device test.
