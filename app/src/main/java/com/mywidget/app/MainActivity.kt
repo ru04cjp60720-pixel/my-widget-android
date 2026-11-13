@@ -1,6 +1,7 @@
 package com.mywidget.app
 
 import android.os.Bundle
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -69,18 +70,31 @@ private fun ShortcutManagerScreen() {
     if (showEditor) {
         var title by remember(editing) { mutableStateOf(editing?.title.orEmpty()) }
         var url by remember(editing) { mutableStateOf(editing?.url.orEmpty()) }
+        val normalizedUrl = normalizeHttpUrl(url)
         AlertDialog(
             onDismissRequest = { showEditor = false },
             title = { Text(if (editing == null) "新增快捷鍵" else "編輯快捷鍵") },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedTextField(title, { title = it }, label = { Text("名稱") }, singleLine = true)
-                    OutlinedTextField(url, { url = it }, label = { Text("網址") }, placeholder = { Text("https://example.com") }, singleLine = true)
+                    OutlinedTextField(
+                        value = url,
+                        onValueChange = { url = it },
+                        label = { Text("網址") },
+                        placeholder = { Text("https://example.com") },
+                        singleLine = true,
+                        isError = url.isNotBlank() && normalizedUrl == null,
+                        supportingText = {
+                            if (url.isNotBlank() && normalizedUrl == null) {
+                                Text("請輸入有效的 http 或 https 網址，例如 https://example.com")
+                            }
+                        }
+                    )
                 }
             },
             confirmButton = {
-                Button(enabled = title.isNotBlank() && url.isNotBlank(), onClick = {
-                    val normalized = if (url.startsWith("http://") || url.startsWith("https://")) url.trim() else "https://${url.trim()}"
+                Button(enabled = title.isNotBlank() && normalizedUrl != null, onClick = {
+                    val normalized = normalizedUrl ?: return@Button
                     val updated = if (editing == null) shortcuts + Shortcut(title = title.trim(), url = normalized)
                     else shortcuts.map { if (it.id == editing?.id) it.copy(title = title.trim(), url = normalized) else it }
                     ShortcutStore.saveAll(context, updated)
@@ -91,4 +105,18 @@ private fun ShortcutManagerScreen() {
             dismissButton = { TextButton(onClick = { showEditor = false }) { Text("取消") } }
         )
     }
+}
+
+
+private fun normalizeHttpUrl(raw: String): String? {
+    val input = raw.trim()
+    if (input.isBlank()) return null
+
+    val hasExplicitScheme = Regex("^[A-Za-z][A-Za-z0-9+.-]*:").containsMatchIn(input)
+    val candidate = if (hasExplicitScheme) input else "https://$input"
+    val uri = runCatching { Uri.parse(candidate) }.getOrNull() ?: return null
+    val scheme = uri.scheme?.lowercase()
+    if (scheme != "http" && scheme != "https") return null
+    if (uri.host.isNullOrBlank()) return null
+    return candidate
 }
