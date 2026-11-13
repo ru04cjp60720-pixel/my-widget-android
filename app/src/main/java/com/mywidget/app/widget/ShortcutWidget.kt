@@ -2,7 +2,6 @@ package com.mywidget.app.widget
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
@@ -23,6 +22,7 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.mywidget.app.MainActivity
+import com.mywidget.app.ShortcutOpenActivity
 import com.mywidget.app.data.ShortcutStore
 
 class ShortcutWidget : GlanceAppWidget() {
@@ -48,7 +48,7 @@ class ShortcutWidget : GlanceAppWidget() {
                         Row(
                             modifier = GlanceModifier.fillMaxWidth()
                                 .clickable(actionStartActivity(
-                                    Intent(Intent.ACTION_VIEW, Uri.parse(shortcut.url))
+                                    Intent(context, ShortcutOpenActivity::class.java).putExtra(ShortcutOpenActivity.EXTRA_URL, shortcut.url)
                                 ))
                                 .padding(vertical = 8.dp, horizontal = 6.dp),
                             verticalAlignment = Alignment.CenterVertically
