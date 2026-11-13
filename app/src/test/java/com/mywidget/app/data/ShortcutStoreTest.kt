@@ -3,8 +3,6 @@ package com.mywidget.app.data
 import android.content.Context
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -55,7 +53,7 @@ class ShortcutStoreTest {
     @Test
     fun getAll_malformedJsonPreservesOriginalBackup() {
         val prefs = context.getSharedPreferences("my_widget_preferences", Context.MODE_PRIVATE)
-        val corrupt = """{"not":"an array""""
+        val corrupt = """{"not":"an array"""
         prefs.edit().putString("shortcuts", corrupt).commit()
 
         assertTrue(ShortcutStore.getAll(context).isEmpty())
