@@ -7,7 +7,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
-import androidx.glance.action.actionStartActivity
+import androidx.glance.action.actionStartActivity as actionStartActivityForActivity
+import androidx.glance.appwidget.action.actionStartActivity as actionStartActivityForIntent
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.provideContent
@@ -41,14 +42,14 @@ class ShortcutWidget : GlanceAppWidget() {
                         text = "My Widget｜點擊設定快捷鍵",
                         style = TextStyle(color = ColorProvider(Color.White)),
                         modifier = GlanceModifier.fillMaxWidth()
-                            .clickable(actionStartActivity<MainActivity>())
+                            .clickable(actionStartActivityForActivity<MainActivity>())
                             .padding(8.dp)
                     )
                 } else {
                     shortcuts.take(8).forEach { shortcut ->
                         Row(
                             modifier = GlanceModifier.fillMaxWidth()
-                                .clickable(actionStartActivity(
+                                .clickable(actionStartActivityForIntent(
                                     Intent(context, ShortcutOpenActivity::class.java)
                                         .setData(Uri.parse("mywidget://shortcut/${shortcut.id}"))
                                         .putExtra(ShortcutOpenActivity.EXTRA_URL, shortcut.url)
