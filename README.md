@@ -34,4 +34,4 @@ The project currently targets Android 15 (API 35) and supports Android 8.0 (API 
 
 ## Status
 
-Early prototype. Source files and an automated build workflow are in place. The APK has not yet been verified by a successful CI build or device test.
+Early prototype. Source files and an automated debug-build workflow are in place. CI build success confirms compilation and APK packaging only; runtime behavior still needs to be tested on Android devices and launchers.
