@@ -1,7 +1,6 @@
 package com.mywidget.app
 
 import android.os.Bundle
-import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -70,7 +69,7 @@ private fun ShortcutManagerScreen() {
     if (showEditor) {
         var title by remember(editing) { mutableStateOf(editing?.title.orEmpty()) }
         var url by remember(editing) { mutableStateOf(editing?.url.orEmpty()) }
-        val normalizedUrl = normalizeHttpUrl(url)
+        val normalizedUrl = UrlNormalizer.normalize(url)
         AlertDialog(
             onDismissRequest = { showEditor = false },
             title = { Text(if (editing == null) "新增快捷鍵" else "編輯快捷鍵") },
@@ -105,18 +104,4 @@ private fun ShortcutManagerScreen() {
             dismissButton = { TextButton(onClick = { showEditor = false }) { Text("取消") } }
         )
     }
-}
-
-
-private fun normalizeHttpUrl(raw: String): String? {
-    val input = raw.trim()
-    if (input.isBlank()) return null
-
-    val hasExplicitScheme = Regex("^[A-Za-z][A-Za-z0-9+.-]*:").containsMatchIn(input)
-    val candidate = if (hasExplicitScheme) input else "https://$input"
-    val uri = runCatching { Uri.parse(candidate) }.getOrNull() ?: return null
-    val scheme = uri.scheme?.lowercase()
-    if (scheme != "http" && scheme != "https") return null
-    if (uri.host.isNullOrBlank()) return null
-    return candidate
 }
