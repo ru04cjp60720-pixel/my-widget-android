@@ -38,7 +38,7 @@ private fun ShortcutManagerScreen() {
         scope.launch { ShortcutWidget().updateAll(context) }
     }
 
-    Column(Modifier.fillMaxSize().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+    Column(Modifier.fillMaxSize().safeDrawingPadding().padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         Text("My Widget", style = MaterialTheme.typography.headlineMedium)
         Text("管理桌面快捷鍵", style = MaterialTheme.typography.titleMedium)
         Button(onClick = { editing = null; showEditor = true }, modifier = Modifier.fillMaxWidth()) {
