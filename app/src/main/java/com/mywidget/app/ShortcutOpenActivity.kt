@@ -9,14 +9,17 @@ import android.widget.Toast
 class ShortcutOpenActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val url = intent.getStringExtra(EXTRA_URL)
-        val opened = if (!url.isNullOrBlank()) {
-            runCatching {
-                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-            }.isSuccess
-        } else {
-            false
-        }
+
+        val rawUrl = intent.getStringExtra(EXTRA_URL)
+        val opened = runCatching {
+            val uri = rawUrl?.let(Uri::parse) ?: return@runCatching false
+            val scheme = uri.scheme?.lowercase()
+            if ((scheme != "http" && scheme != "https") || uri.host.isNullOrBlank()) {
+                return@runCatching false
+            }
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+            true
+        }.getOrDefault(false)
 
         if (!opened) {
             Toast.makeText(this, "無法開啟此網址，請確認網址或安裝瀏覽器", Toast.LENGTH_LONG).show()
