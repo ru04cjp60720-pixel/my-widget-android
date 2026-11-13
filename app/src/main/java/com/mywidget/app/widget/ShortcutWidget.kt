@@ -1,6 +1,10 @@
 package com.mywidget.app.widget
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.action.actionStartActivity
@@ -10,40 +14,51 @@ import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.clickable
 import androidx.glance.layout.Alignment
-import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.Color
 import com.mywidget.app.MainActivity
+import com.mywidget.app.data.ShortcutStore
 
 class ShortcutWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        val shortcuts = ShortcutStore.getAll(context)
         provideContent {
-            Box(
-                modifier = GlanceModifier
-                    .fillMaxSize()
+            Column(
+                modifier = GlanceModifier.fillMaxSize()
                     .background(ColorProvider(Color(0xFF202124)))
-                    .clickable(actionStartActivity<MainActivity>())
-                    .padding(14.dp),
-                contentAlignment = Alignment.Center
+                    .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                if (shortcuts.isEmpty()) {
                     Text(
-                        text = "My Widget",
-                        style = TextStyle(color = ColorProvider(Color.White))
+                        text = "My Widget｜點擊設定快捷鍵",
+                        style = TextStyle(color = ColorProvider(Color.White)),
+                        modifier = GlanceModifier.fillMaxWidth()
+                            .clickable(actionStartActivity<MainActivity>())
+                            .padding(8.dp)
                     )
-                    Text(
-                        text = "點擊以管理快捷鍵",
-                        style = TextStyle(color = ColorProvider(Color(0xFFCCCCCC)))
-                    )
+                } else {
+                    shortcuts.take(8).forEach { shortcut ->
+                        Row(
+                            modifier = GlanceModifier.fillMaxWidth()
+                                .clickable(actionStartActivity(
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(shortcut.url))
+                                ))
+                                .padding(vertical = 8.dp, horizontal = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "•  ${shortcut.title}",
+                                style = TextStyle(color = ColorProvider(Color.White))
+                            )
+                        }
+                    }
                 }
             }
         }
